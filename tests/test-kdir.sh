@@ -11,7 +11,7 @@ printf '%s\n' "${KDIR-unset}" >> "$PROBE_LOG"
 echo n
 PROBE
 chmod +x "$tmpdir/probe"
-for feature in HAVE_PROC_OPS HAVE_VM_FLAGS_SET; do
+for feature in HAVE_PROC_OPS HAVE_VM_FLAGS_SET HAVE_CLASS_CREATE_WITH_MODULE; do
     cp "$tmpdir/probe" "$tmpdir/test_gdrdrv_${feature}.sh"
 done
 for mode in override fallback; do
@@ -26,7 +26,7 @@ for mode in override fallback; do
     env -u KDIR PROBE_LOG="$tmpdir/log" "$make_bin" --no-print-directory \
         -C "$repo/src/gdrdrv" -n clean KVER=test-kernel \
         "CONF_SCRIPT_DIR=$tmpdir" NVIDIA_SRC_DIR=/nonexistent "$@" >/dev/null 2>&1
-    printf '%s\n%s\n' "$expected" "$expected" > "$tmpdir/expected"
+    printf '%s\n%s\n%s\n' "$expected" "$expected" "$expected" > "$tmpdir/expected"
     diff -u "$tmpdir/expected" "$tmpdir/log"
 done
 
@@ -37,7 +37,7 @@ cat > "$tmpdir/bin/make" <<'MAKE'
 [ "$1" = -C ] && [ "$2" = "$EXPECTED_KDIR" ] && [ "$#" = 4 ]
 MAKE
 chmod +x "$tmpdir/bin/make"
-for feature in HAVE_PROC_OPS HAVE_VM_FLAGS_SET; do
+for feature in HAVE_PROC_OPS HAVE_VM_FLAGS_SET HAVE_CLASS_CREATE_WITH_MODULE; do
     for mode in override fallback; do
         if [ "$mode" = override ]; then
             expected="$tmpdir/custom kernel"
